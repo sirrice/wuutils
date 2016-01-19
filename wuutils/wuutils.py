@@ -11,16 +11,17 @@ legend = theme_bw() + theme(**{
   "legend.justification":"c(1,0)", "legend.position":"c(1,0)",
   "legend.key" : element_blank(),
   "legend.title":element_blank(),
-  "text": element_text(colour = "'#999999'", family = esc("Source Sans Pro Light"), size=20),
+  "text": element_text(colour = "'#333333'", family = esc("Source Sans Pro Light"), size=11),
+  "axis.text": element_text(colour = "'#333333'", family = esc("Source Sans Pro Light"), size=11),
   "plot.background": element_blank(),
   "panel.border": element_rect(color=esc("#e0e0e0")),
   "strip.background": element_rect(fill=esc("#efefef"), color=esc("#e0e0e0")),
-  "strip.text": element_text(color=esc("#555555"))
+  "strip.text": element_text(color=esc("#333333"))
 })
 
 # need to add the following to ggsave call:
 #    libs=['grid']
-legend_bottom = theme_bw() + theme(**{
+legend_bottom = legend + theme(**{
   "legend.position":esc("bottom"),
   "legend.margin": "unit(-.5, 'cm')"
 })
