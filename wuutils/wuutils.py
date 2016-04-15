@@ -26,7 +26,7 @@ legend_bottom = legend + theme(**{
   "legend.margin": "unit(-.5, 'cm')"
 })
 
-legend_none = legend + theme(**{"legend.position": "none"})
+legend_none = legend + theme(**{"legend.position": esc("none")})
 
 
 
