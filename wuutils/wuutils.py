@@ -26,6 +26,36 @@ legend_bottom = legend + theme(**{
   "legend.margin": "unit(-.5, 'cm')"
 })
 
+legend_none = legend + theme(legend.position="none")
+
+
+
+
+###############################################
+#
+#  Caching Utilities
+#
+###############################################
+def cacheit(fname="./.cache.db"):
+  import bsddb3
+  db = bsddb3.hashopen(fname)
+  def dec(func):
+    def f(*args, **kwargs):
+      data = dict(
+          name=func.__name__,
+          args=args,
+          kwargs=kwargs
+      )
+      key = str(data)
+      if key not in db: 
+        db[key] = json.dumps(func(*args, **kwargs))
+      return json.loads(db[key])
+    return f
+  return dec
+
+
+
+       
 
 
 
@@ -172,7 +202,6 @@ def args_to_sql(kwargs):
   if not l: 
     return "1 = 1"
   return " AND ".join(l)
-
 
 
 
