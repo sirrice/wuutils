@@ -1,6 +1,7 @@
 import math
 import types
 from itertools import *
+import json
 import random
 from operator import *
 from pygg import *
@@ -23,7 +24,7 @@ legend = theme_bw() + theme(**{
 #    libs=['grid']
 legend_bottom = legend + theme(**{
   "legend.position":esc("bottom"),
-  "legend.margin": "unit(-.5, 'cm')"
+  "legend.spacing": "unit(-.5, 'cm')"
 })
 
 legend_none = legend + theme(**{"legend.position": esc("none")})
