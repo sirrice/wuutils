@@ -24,7 +24,8 @@ legend = theme_bw() + theme(**{
 #    libs=['grid']
 legend_bottom = legend + theme(**{
   "legend.position":esc("bottom"),
-  "legend.spacing": "unit(-.5, 'cm')"
+  #"legend.spacing": "unit(-.5, 'cm')"
+
 })
 
 legend_none = legend + theme(**{"legend.position": esc("none")})
@@ -172,6 +173,18 @@ def split_and_run(l, keys, f):
   return ret
     
 
+
+def to_utf(v):
+  """
+  Do anything under the sun to get a string out of this value.
+  """
+  if isinstance(v, unicode):
+    s = v.encode('utf-8', errors='ignore')
+  elif isinstance(v, basestring):
+    s = unicode(v, 'utf-8', errors='ignore').encode('utf-8', errors='ignore')
+  else:
+    s = str(v)
+  return s
 
 
 def sample_pts(pts, perc):
