@@ -1,3 +1,4 @@
+import csv
 import math
 import types
 from itertools import *
@@ -66,6 +67,18 @@ def cacheit(fname="./.cache.db"):
 #  Data manipulation utilities
 #
 ###############################################
+
+def replace_attr(data, attr, f, skip_nulls=True):
+  """
+  equivalent to:
+  for d in data:
+    if d[attr] != None or not skip_nulls:
+      d[attr] = f(d[attr])
+  """
+  for d in data:
+    if d[attr] != None or not skip_nulls:
+      d[attr] = f(d[attr])
+  return data
 
 def dedup_list(seq, key=lambda d: d):
   """
@@ -219,3 +232,11 @@ def args_to_sql(kwargs):
 
 
 
+def load_csv(fname):
+  with file(fname) as f:
+    dialect = csv.Sniffer().sniff(f.read(2024))
+    f.seek(0)
+    reader = csv.reader(f, dialect)
+    header = reader.next()
+    data = [dict(zip(header, l)) for l in reader]
+  return data
