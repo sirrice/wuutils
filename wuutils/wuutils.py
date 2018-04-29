@@ -76,6 +76,8 @@ def replace_attr(data, attr, f, skip_nulls=True):
       d[attr] = f(d[attr])
   """
   for d in data:
+    if attr not in d:
+      d[attr] = None
     if d[attr] != None or not skip_nulls:
       d[attr] = f(d[attr])
   return data
@@ -164,7 +166,7 @@ def fold(data, attrs, keyname="key", valname="val"):
       newd = dict()
       newd.update(d)
       newd[keyname] = attr
-      newd[valname] = d[attr]
+      newd[valname] = d.get(attr, None)
       ret.append(newd)
   return ret
 

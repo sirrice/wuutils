@@ -7,7 +7,7 @@ except ImportError:
 from setuptools import setup, find_packages
 
 setup(name="wuutils",
-      version="0.0.11",
+      version="0.0.12",
       description="Dumb utility functions I use",
       license="MIT",
       author="Eugene Wu",
