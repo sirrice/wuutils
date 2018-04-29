@@ -8,13 +8,14 @@ from operator import *
 from pygg import *
 
 
+# Source Sans Pro Light
 legend = theme_bw() + theme(**{
   "legend.background": element_blank(), #element_rect(fill=esc("#f7f7f7")),
   "legend.justification":"c(1,0)", "legend.position":"c(1,0)",
   "legend.key" : element_blank(),
   "legend.title":element_blank(),
-  "text": element_text(colour = "'#333333'", family = esc("Source Sans Pro Light"), size=11),
-  "axis.text": element_text(colour = "'#333333'", family = esc("Source Sans Pro Light"), size=11),
+  "text": element_text(colour = "'#333333'", family = esc("Arial"), size=11),
+  "axis.text": element_text(colour = "'#333333'", family = esc("Arial"), size=11),  
   "plot.background": element_blank(),
   "panel.border": element_rect(color=esc("#e0e0e0")),
   "strip.background": element_rect(fill=esc("#efefef"), color=esc("#e0e0e0")),
