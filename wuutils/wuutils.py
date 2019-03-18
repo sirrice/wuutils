@@ -5,6 +5,7 @@ from itertools import *
 import json
 import random
 from operator import *
+from functools import partial
 from pygg import *
 
 
@@ -79,7 +80,7 @@ def replace_attr(data, attr, f, skip_nulls=True):
   for d in data:
     if attr not in d:
       d[attr] = None
-    if d[attr] != None or not skip_nulls:
+    if d.get(attr, None) != None or not skip_nulls:
       d[attr] = f(d[attr])
   return data
 
@@ -91,11 +92,21 @@ def dedup_list(seq, key=lambda d: d):
   seen_add = seen.add
   return [ x for x in seq if not (key(x) in seen or seen_add(key(x)))]
 
-def filter_data(data, attr, val):
+def filter_data(data, *args, **kwargs):
   """
   Filter a list of objects based on attribute's value
+  args can be [attr, val] for a single atribute, and value
+  kwargs is pairs of attr=val
   """
-  return [d for d in data if d[attr] == val]
+  tolist = lambda v: isinstance(v, list) and v or [v]
+  f = lambda v: True
+  h = lambda v: True
+  if len(args) >= 2:
+    attr, vals = args[0], set(args[1:])
+    f = lambda d: d[attr] in vals
+  if kwargs:
+    h = lambda d: all((d.get(k, None) in tolist(v) for k,v in kwargs.iteritems()))
+  return [d for d in data if f(d) and h(d)]
 
 def combine_lists(list_of_lists):
   """
@@ -243,3 +254,77 @@ def load_csv(fname):
     header = reader.next()
     data = [dict(zip(header, l)) for l in reader]
   return data
+
+
+def run_q(db, q, *args, **kwargs):
+  """
+  Helper function to turn database query results into list of python dicts
+  """
+  cur = db.execute(q, *args, **kwargs)
+  keys = cur.keys()
+  data = []
+  for row in cur:
+    data.append(dict(zip(keys, list(row))))
+  return data
+
+def data_to_db(db, data, tablename="data"):
+  """
+  @db database connection
+  @data  list of dicts
+  @return list of query strings
+
+  Infers schema and loads into a database
+
+  Usage:
+
+      db = create_engine("sqlite://")
+      data_to_db(db, data, "data")
+  """
+  keys = set()
+  def gettype(v):
+    if v is None: 
+      return None
+    if type(v) == float:
+      return "float"
+    if type(v) == int:
+      return "int"
+    return "text"
+
+  def getcoltype(data, key):
+    vs = filter(bool, pluckone(data, key))
+    types = set(map(gettype, vs))
+    if not types or "text" in types: 
+      return "text"
+    if "float" in types:
+      return "float"
+    if "int" in types: 
+      return "int"
+    return "text"
+  getcoltype = partial(getcoltype, data)
+
+  for d in data[:1000]:
+    keys.update(d.keys())
+
+  ctemplate = "CREATE TABLE IF NOT EXISTS %s(%s)"
+  itemplate = "INSERT INTO %s(%s) VALUES(%s)"
+
+  qs = []
+  keys = list(keys)
+  types = map(getcoltype, keys)
+  schema = ["%s %s" % (k,t) for k,t in zip(keys, types)]
+  q = ctemplate % (tablename, ", ".join(schema))
+  qs.append(q)
+  db.execute(q)
+
+  # make sure all text types are actually strings
+  strkeys = [k for k,t in zip(keys, types) if t == "text"]
+  data = list(map(dict, data))
+  for d in data:
+    for k in strkeys:
+      d[k] = str(d[k])
+
+  q = itemplate % (tablename, ", ".join(keys), ", ".join([":%s" % k for k in keys]))
+  qs.append(q)
+  db.execute(q, data)
+
+  return qs
