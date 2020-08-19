@@ -7,7 +7,7 @@ except ImportError:
 from setuptools import setup, find_packages
 
 setup(name="wuutils",
-      version="0.0.17",
+      version="0.0.20",
       description="Dumb utility functions I use",
       license="MIT",
       author="Eugene Wu",
@@ -17,6 +17,9 @@ setup(name="wuutils",
       include_package_data = True,
       package_dir = {'wuutils' : 'wuutils'},
       install_requires = [
-        'pygg'
+        'pygg',
+        'sqlalchemy',
+        'cashier',
+        'pandas'
       ],
       keywords= "")

@@ -1,1 +1,1 @@
-from wuutils import *
+from .wuutils import *
